@@ -4,12 +4,18 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 
+// v-on 简写:
+// v-bind 简写@
+
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
+  // render:function (h) {
+  //   return h(App)
+  // },
   template: '<App/>',
   components: { App }
 })

@@ -1,12 +1,24 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
+    <transition name="fade">
+      <h1 v-show="showTag">{{ msg }}</h1>
+    </transition>
+
+    <button v-on:click="showTag =! showTag">show</button>
+
     <h2 v-bind:class="[classA,{'redfont':hasError}]"  v-bind:style="linkCss">Essential Links</h2>
 
-    <Testcom :weight="weight"></Testcom>
+    <testCom :weight="weight"  @my-event="onTestcomEvent">
+      <p slot="header"> 嘻嘻嘻嘻header</p>
+      <span slot="footer">fish footer</span>
+    </testCom>
 
     <button v-on:click="changeWeight">changeHattWeight</button>
+    <!--keep alive 可以切换的时候缓存起来-->
 
+    <keep-alive>
+    <p :is="comToRender" :weight="weight"  @my-event="onTestcomEvent"></p>
+    </keep-alive>
 
     <p v-if="isShowPartA">PartA</p>
     <p v-else>没有数据啦</p>
@@ -19,19 +31,32 @@
 
 <script>
 
-  import Testcom from './Testcom.vue'
+  import testCom from './Testcom.vue'
+  import  vSelect from  './VSelect.vue'
   export default {
+    components:{
+      testCom,
+      vSelect
+    },
   methods:{
     changeWeight(){
       this.weight='999999999'
       this.linkCss.color='black'
       this.isShowPartA=!this.isShowPartA;
+
+      this.comToRender =this.comToRender==='v-select'?'test-com':'v-select'
+
+    },
+    onTestcomEvent(message){
+      console.log('组件Testcom回调'+message)
     }
   },
   name: 'hello',
   data () {
     return {
       classA:'bluefont',
+      comToRender:'test-com',
+      showTag:true,
       hasError:true,
       isShowPartA:false,
       classStr:{
@@ -47,9 +72,7 @@
       }
     }
   },
-  components:{
-    Testcom
-  }
+
 }
 </script>
 
@@ -71,5 +94,12 @@ li {
 
 a ,p{
   color: #42b983;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 1.5s
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active in below version 2.1.8 */ {
+  opacity: 0
 }
 </style>
